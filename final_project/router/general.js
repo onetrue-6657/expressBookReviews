@@ -23,38 +23,63 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-    res.send(JSON.stringify(books, null, 4));
+public_users.get('/', async function (req, res) {
+    const data = await new Promise((resolve) => {
+        resolve(books);
+    });
+    res.send(JSON.stringify(data, null, 4));
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn', async function (req, res) {
     const isbn = req.params.isbn;
-    res.send(books[isbn]);
+
+    new Promise((resolve) => {
+        resolve(books[isbn]);
+    })
+    .then((data) => {
+        res.send(JSON.stringify(data, null, 4));
+    })
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-    const authorName = req.params.author;
-    const book = Object.values(books).filter(book => book.author === authorName);
+public_users.get('/author/:author', async function (req, res) {
+    const author = req.params.author;
 
-    if (book.length > 0) {
-        res.send(book);
-    } else {
-        res.status(404).json({ message: "No books found by this author." });
-    }
+    new Promise((resolve) => {
+        let books = [];
+        let bookKeys = Object.keys(books);
+        for (let i = 0; i < bookKeys.length; i++) {
+            let book  = books[bookKeys[i]];
+            if (book.author === author) {
+                books.push(book);
+            }
+        }
+        resolve(books);
+    })
+    .then((data) => {
+        res.send(JSON.stringify(data, null, 4));
+    })
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-    const titleName = req.params.title;
-    const book = Object.values(books).filter(book => book.title === titleName);
+    const title = req.params.title;
 
-    if (book.length > 0) {
-        res.send(book);
-    } else {
-        res.status(404).json({ message: "No books found by this author." });
-    }
+    new Promise((resolve) => {
+        let books = [];
+        let bookKeys = Object.keys(books);
+        for (let i = 0; i < bookKeys.length; i++) {
+            let book  = books[bookKeys[i]];
+            if (book.title === title) {
+                books.push(book);
+            }
+        }
+        resolve(books);
+    })
+    .then((data) => {
+        res.send(JSON.stringify(data, null, 4));
+    })
 });
 
 //  Get book review
