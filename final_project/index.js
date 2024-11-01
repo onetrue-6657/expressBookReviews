@@ -12,6 +12,7 @@ app.use(express.json());
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
 app.use("/customer/auth/*", function auth(req,res,next){
+    const { username, password } = req.body;
     let validUsers = users.filter((user) => {
         return (user.username === username && user.password === password);
     });
@@ -22,7 +23,7 @@ app.use("/customer/auth/*", function auth(req,res,next){
     }
 });
  
-const PORT =5001;
+const PORT = 5001;
 
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
